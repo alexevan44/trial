@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tradebook – trading journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="hero">
+<svg class="waves" viewBox="0 0 800 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 70 C120 20 220 120 360 70 S620 20 800 80" fill="none" stroke="#FAFAF8" stroke-opacity=".12" stroke-width="2"/><path d="M0 120 C140 70 240 170 380 120 S640 70 800 130" fill="none" stroke="#C9A84C" stroke-opacity=".3" stroke-width="2"/></svg>
+<div class="wrap">
+<div class="top"><h1>Tradebook</h1><button id="theme" class="ghost" aria-label="Switch between light and dark mode">Light or dark</button></div>
+<section class="card" id="card" aria-label="Account balance">
+<div class="ch">
+<div><span class="lbl" id="cardName">Main account</span><span class="cur" id="cardCur">USD</span></div>
+<svg class="chip" viewBox="0 0 40 30" width="42" height="32" aria-hidden="true"><rect x="1" y="1" width="38" height="28" rx="6" fill="#C9A84C"/><path d="M1 10h38M1 20h38M14 1v28M26 1v28" stroke="#8a6d1f" stroke-width="1.2" fill="none"/></svg>
+</div>
+<span class="lbl" style="margin-top:18px">Available balance</span>
+<div class="amt"><b id="balAmt" aria-live="polite">$0.00</b><button id="eye" aria-label="Hide balance" aria-pressed="false"></button></div>
+<small id="eqv"></small>
+<div class="pills">
+<div><span>Today</span><b id="chDay">–</b></div>
+<div><span>This month</span><b id="chMo">–</b></div>
+<div><span>Return</span><b id="chRet">–</b></div>
+<div><span>All-time profit</span><b id="net">$0.00</b></div>
+</div>
+<div class="curve" id="curve"></div>
+</section>
+<div class="qa">
+<button data-go="add"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i>Log trade</button>
+<button data-go="journal"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></i>Journal</button>
+<button data-go="calendar"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></i>Calendar</button>
+<button data-go="news"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h11v14H7a2 2 0 0 1-2-2V5zM16 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/></svg></i>News</button>
+</div>
+</div>
+</header>
+
+<nav class="nav" aria-label="Sections"><div class="wrap">
+<button data-nav="dash">Dashboard</button>
+<button data-nav="journal">Journal</button>
+<button data-nav="calendar">Calendar</button>
+<button data-nav="news">News</button>
+<button data-nav="tools">Tools</button>
+<span class="sp"></span>
+<select id="acct" aria-label="Active account"></select>
+<button id="filtBtn" aria-expanded="false">Filters<b id="fbadge" hidden></b></button>
+</div></nav>
+
+<main class="wrap">
+<div class="bar" id="filters" hidden>
+<label>Symbol <select id="fs"></select></label>
+<label>Side <select id="fd"><option value="">All</option><option>Buy</option><option>Sell</option></select></label>
+<label>Setup <select id="ft"></select></label>
+<label>From <input id="ff" type="date"></label>
+<label>To <input id="fto" type="date"></label>
+<button id="freset">Reset filters</button>
+</div>
+
+<div class="view" data-view="dash">
+<section>
+<div class="tabs"><h2>Recent activity</h2><span><button data-go="journal">See all</button></span></div>
+<div id="act"></div>
+</section>
+<div class="stats" id="stats"></div>
+<section>
+<div class="tabs"><h2 id="gh">Results by symbol</h2><span><button data-g="sym" aria-pressed="true">Symbol</button><button data-g="setup" aria-pressed="false">Setup</button><button data-g="day" aria-pressed="false">Weekday</button><button data-g="side" aria-pressed="false">Side</button><button data-g="mood" aria-pressed="false">Mood</button><button data-g="chk" aria-pressed="false">Checklist</button></span></div>
+<div id="bysym"></div>
+</section>
+<section>
+<h2>Drawdown</h2>
+<div id="dd"></div>
+<p class="note" id="ddn" style="margin:8px 0 0"></p>
+</section>
+</div>
+
+<div class="view" data-view="journal" hidden>
+<section>
+<h2>Trades</h2>
+<div class="tw" id="tw" tabindex="0"></div>
+</section>
+</div>
+
+<div class="view" data-view="calendar" hidden>
+<section>
+<div class="tabs"><h2 id="mh">Daily results</h2><span><button id="pm" aria-label="Previous month">‹</button><button id="nm" aria-label="Next month">›</button></span></div>
+<div id="cal"></div>
+<div class="goals"><label>Monthly profit target <input id="gt" type="number" min="0" step="any"></label><label>Daily loss limit <input id="gl" type="number" min="0" step="any"></label></div>
+<div id="gout"></div>
+</section>
+</div>
+
+<div class="view" data-view="news" hidden>
+<section>
+<div class="tabs"><h2>Live market news</h2><span><button id="nr">Refresh</button></span></div>
+<div class="data"><label>Source <select id="nf"></select></label><label>Keyword <input id="nq" placeholder="gold, fed, oil"></label></div>
+<div class="chips" id="nchips"></div>
+<p class="note" id="ns" style="margin:10px 0">Headlines refresh every 5 minutes while this tab is open.</p>
+<div id="newsList"></div>
+</section>
+</div>
+
+<div class="view" data-view="tools" hidden>
+<section>
+<h2>Your data</h2>
+<div class="data">
+<label>Starting balance <input id="bal" type="number" min="0" step="any" value="1000"></label>
+<label class="btn" tabindex="0" id="impLbl">Import MT5 CSV<input id="file" type="file" accept=".csv,.txt,text/csv" hidden></label>
+<button id="copy">Copy as CSV</button>
+<button id="demo">Load sample trades</button>
+<button id="clear">Clear all</button>
+</div>
+<p class="note" style="margin-bottom:0">Trades are saved in this browser only. Import skips duplicates. Copy as CSV copies whatever your filters currently show.</p>
+</section>
+<section>
+<h2>Accounts and currency</h2>
+<div class="data">
+<label>Currency for this account <select id="cur"><option value="$">US dollar ($)</option><option value="€">Euro (€)</option><option value="£">Pound (£)</option><option value="₦">Naira (₦)</option></select></label>
+<label>New account <input id="newAcct" placeholder="Prop firm 50k" maxlength="30"></label>
+<button id="addAcct">Add account</button>
+<button id="delAcct">Delete this account</button>
+</div>
+<p class="note" style="margin-bottom:0">Switch accounts from the menu bar. Each account keeps its own trades, balance, targets and currency.</p>
+</section>
+<section>
+<h2>Backup and restore</h2>
+<div class="data"><button id="bkDown">Download backup</button><label class="btn" tabindex="0" id="bkLbl">Restore from backup<input id="bkFile" type="file" accept=".json,application/json" hidden></label></div>
+<p class="note" style="margin-bottom:0">The backup holds every account, screenshot and checklist. Restoring replaces what is in this browser.</p>
+</section>
+<section>
+<h2>Cloud sync with Supabase</h2>
+<div class="data">
+<label>Project URL <input id="sbUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>
+<label>Anon key <input id="sbKey" autocomplete="off"></label>
+<label>Email <input id="sbEmail" type="email" autocomplete="email"></label>
+<label>Password <input id="sbPw" type="password" autocomplete="current-password"></label>
+</div>
+<div class="data" style="margin-top:10px"><button id="sbIn">Sign in</button><button id="sbUp">Create account</button><button class="primary" id="sbSync">Sync now</button><button id="sbOut">Sign out</button></div>
+<p class="note" id="sbs" style="margin:10px 0 0">Run supabase/schema.sql in your project first (see the README). Use the anon key only, never the service key.</p>
+</section>
+<section>
+<h2>Position size calculator</h2>
+<div class="rc">
+<label>Balance <input id="rb" type="number" min="0" step="any" placeholder="Uses your journal balance"></label>
+<label>Risk per trade (%) <input id="rp" type="number" min="0" step="any" value="1"></label>
+<label>Stop distance (pips) <input id="rs" type="number" min="0" step="any" placeholder="20"></label>
+<label>Pip value per lot <input id="rv" type="number" min="0" step="any" value="10"></label>
+</div>
+<p id="rout"></p>
+<p class="note" style="margin:8px 0 0">Pip value differs by symbol and broker (about $10 per standard lot for most USD-quoted forex pairs). Check yours before trading.</p>
+</section>
+</div>
+</main>
+
+<div class="back" id="back"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Log a trade">
+<header><h2>Log a trade</h2><button id="closeDrawer" aria-label="Close">×</button></header>
+<form id="form" class="f">
+<label>Date <input id="d" type="date" required></label>
+<label>Symbol <input id="s" placeholder="XAUUSD" required maxlength="14"></label>
+<label>Side <select id="side"><option>Buy</option><option>Sell</option></select></label>
+<label>Lots <input id="lots" type="number" step="any" min="0" placeholder="0.10"></label>
+<label>Profit or loss <input id="pl" type="number" step="any" required placeholder="-25.00"></label>
+<label>Amount risked <input id="risk" type="number" step="any" min="0" placeholder="25"></label>
+<label>Setup <input id="setup" list="setups" placeholder="Breakout" maxlength="24"></label>
+<datalist id="setups"></datalist>
+<label>Notes <input id="note" placeholder="What did you see?" maxlength="120"></label>
+<label class="full">Mood <select id="mood"><option value="">Not set</option><option>Calm</option><option>Rushed</option><option>Fearful</option><option>Revenge</option><option>Overconfident</option></select></label>
+<label class="full">Chart screenshot <input id="shot" type="file" accept="image/*"></label>
+<div class="full" id="shotPrev"></div>
+<fieldset class="full ck"><legend>Pre-trade checklist</legend><div id="chk"></div></fieldset>
+<button class="primary full" type="submit" id="sub">Add trade</button>
+<button type="button" class="full" id="cancel" hidden>Cancel edit</button>
+</form>
+</aside>
+
+<button class="primary fab" id="openAdd">+ Log trade<kbd>N</kbd></button>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div class="lb" id="lb" hidden><img id="lbImg" alt="Trade chart screenshot"></div>
+<script src="js/app.js"></script>
+<script src="js/features.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/news.js"></script>
+<script src="js/bank.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
